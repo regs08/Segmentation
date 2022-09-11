@@ -1,5 +1,5 @@
 """
-takes in a checked file dict from check dir file format. we assumbe its in the following format. where the keys are the
+takes in a checked file dict from check dir file format. we assume its in the following format. where the keys are the
 labels in the directory each containing a dictionary of checked files
 
     checked_images/masks = {
@@ -159,6 +159,7 @@ def find_and_display_pairs(checked_image_files, checked_mask_files):
     no_matching_pairs = get_no_match_file_pairs(pair_dict)
     display_no_match_file_pairs(no_matching_pairs)
     return pair_dict
+
 
 def read_checked_dict(file_path):
     assert os.path.exists(file_path), print(f'Path not found {file_path}')

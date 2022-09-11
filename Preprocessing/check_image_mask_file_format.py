@@ -8,7 +8,7 @@ image-or-mask-dir
         img2..
     label-name2...
 
-    default extensions we use
+    default extensions we use ['jpg', 'tiff', 'png', 'jpeg']
 
     default format we use '_' + '[0-9]+'
 

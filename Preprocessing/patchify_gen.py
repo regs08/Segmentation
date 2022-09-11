@@ -9,6 +9,11 @@ patchified-images
             label-name_{orig_file_id}_{patchify_num}
             ...
 default exts we search for: ['jpg', 'tiff', 'png', 'jpeg']
+
+Shout out to github account bnsreenu, the function patchify_and_save_image_mask_file was modified from his original code
+here: https://github.com/bnsreenu/python_for_microscopists/blob/master/219_unet_small_dataset_using_functional_blocks.py
+
+
 """
 import glob
 from patchify import patchify
@@ -16,6 +21,7 @@ import os
 import cv2
 import numpy as np
 import argparse
+
 
 def get_image_mask_files(image_mask_dir, image_exts):
     file_list = []
@@ -50,7 +56,7 @@ def get_patch_save_name(save_dir, image_mask_path, patch_num, ext):
     return patch_save_path
 
 
-def patchify_and_save_image_mask_file(image_mask_path, save_dir, ext):
+def patchify_and_save_image_mask_file(image_mask_path, save_dir, save_ext):
     img_arr = load_image(image_mask_path)
     patches = patchify(img_arr, (512, 512, 3), step=512)
     out_patches = []
@@ -60,46 +66,69 @@ def patchify_and_save_image_mask_file(image_mask_path, save_dir, ext):
             single_patch = patches[i, j, :, :]
             single_patch = np.array(single_patch, dtype='float32')[0]
             #single_patch = cv2.resize(single_patch, (256, 256))
-            patch_save_path = get_patch_save_name(save_dir, image_mask_path, patch_num, ext)
-            cv2.imwrite(patch_save_path, single_patch)
+            patch_save_path = get_patch_save_name(save_dir, image_mask_path, patch_num, save_ext)
+            assert cv2.imwrite(patch_save_path, single_patch), print(f'Saved failed for {patch_save_path}')
             out_patches.append(single_patch)
             patch_num +=1
+    print(f'Saved {patch_num} patches to {save_dir}!!')
 
     return np.array(out_patches)
 
 
-def patchify_and_save_from_batch(file_list, save_dir, batch_size=16, ext='.png'):
-    batch_gen = get_batch_from_file_list(file_list, batch_size)
+def patchify_and_save_from_batch(image_mask_file_list, save_dir, batch_size, save_ext):
+    batch_gen = get_batch_from_file_list(image_mask_file_list, batch_size=batch_size)
 
     while True:
         try:
             batch = next(batch_gen)
             for image_mask_path in batch:
-                patchify_and_save_image_mask_file(image_mask_path, save_dir, ext=ext)
+                patchify_and_save_image_mask_file(image_mask_path, save_dir, save_ext=save_ext)
         except StopIteration:
             break
 
 
-#takes a original image and then compares the patches to it
-def view_patches(orig_image_mask_path, patch_save_dir, ext='.png'):
-    orig_image_filename = os.path.splitext(os.path.basename(orig_image_mask_path))[0]
-    orig_image_mask = load_image(orig_image_mask_path)
-    cv2.imshow('Original Image', orig_image_mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    patch_num = 0
-    while True:
-        patch_filename = f'{orig_image_filename}_patch_{patch_num}{ext}'
-        patch_path = os.path.join(patch_save_dir, patch_filename)
-
-        if os.path.exists(patch_path):
-            patch_num+=1
-            image_mask_patch = load_image(patch_path)
-            cv2.imshow(f'Patch No.{patch_num}', image_mask_patch)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        else:
-            break
+def get_file_list_perform_and_save_patches(image_mask_dir, save_dir,
+                                           batch_size=16,
+                                           image_exts=['jpg', 'tiff', 'png', 'jpeg'],
+                                           save_ext='.png'):
+    image_mask_file_list = get_image_mask_files(image_mask_dir, image_exts)
+    patchify_and_save_from_batch(image_mask_file_list=image_mask_file_list,
+                                 save_dir=save_dir,
+                                 batch_size=batch_size,
+                                 save_ext=save_ext)
 
 
+def main():
+    parser = argparse.ArgumentParser(
+        description="Patchifying images or masks using the patchify library")
 
+    parser.add_argument("-im",
+                        "--ImageMaskDir",
+                        help="where our image or mask paths our stored",
+                        type=str)
+    parser.add_argument("-s",
+                        "--SavePatchDir",
+                        help="our dir where our pathched images our stored ",
+                        type=str)
+    parser.add_argument("-b",
+                        "--BatchSize",
+                        help="size of the bacthes were patchifying",
+                        default=16,
+                        type=int)
+    parser.add_argument("-e",
+                        "--ImageExts",
+                        help="our extensions we search our image or mask dir for",
+                        default=['jpg', 'tiff', 'png', 'jpeg'],
+                        type=str,
+                        nargs='*')
+    parser.add_argument("--se",
+                        "--SaveExt",
+                        help="ext for our saved patches",
+                        type=str,
+                        default='.png')
+    args = parser.parse_args()
+    get_file_list_perform_and_save_patches(args.ImageMaskDir, args.SavePatchDir)
+
+
+if __name__ == '__main__':
+    main()

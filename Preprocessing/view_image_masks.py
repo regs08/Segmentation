@@ -101,3 +101,6 @@ def main():
     plot_sample_and_find_pairs(args.SourceDir, args.SearchDir)
 
 # TODO change all the exts to have the period in them e.g jpg -> .jpg
+
+if __name__ == '__main__':
+    main()

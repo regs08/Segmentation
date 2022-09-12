@@ -129,9 +129,6 @@ def main():
     make_workspace(project_dir=args.PROJECTDIR, class_names=class_names)
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
 
-root = "/Users/cole/PycharmProjects/Forgit/Segmentaion"
-class_names = ['a', 'b', 'c']
-make_workspace(os.path.join(root, 'test'), class_names)

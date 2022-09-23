@@ -12,7 +12,7 @@ Patches
         Class-Name(s)
 prints a dictionary containing the dir paths
 
-optional arguments:
+Expected arguments:
     -h, --help            show this help message and exit
     -d, --PROJECTDIR
         dir to project
@@ -131,4 +131,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

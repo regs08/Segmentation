@@ -24,6 +24,8 @@ Expected arguments:
         name of classes uses the join method seperate multiple by '_'
     -s, --savePath
         name of the save path for our dict
+    -m, --maskDir
+        name of the dir for our masks
 """
 
 import pickle
@@ -33,9 +35,10 @@ import cv2
 import numpy as np
 import random
 import argparse
+import matplotlib.pyplot as plt
 
 
-def get_images_and_anns(json_file, img_dir):
+def get_images_and_anns(json_file, img_dir, mask_dir):
     def load_masks_from_ann(ann):
         num_anns = len(ann)
         rand_colors = random.sample(range(15, 255, 5), num_anns)
@@ -46,18 +49,24 @@ def get_images_and_anns(json_file, img_dir):
             mask += np.where(temp > 0, color, temp)
         return mask
 
+    def save_mask():
+        save_path = os.path.join(mask_dir, filename)
+        save_path = os.path.splitext(save_path)[0]
+        plt.imsave(f'{save_path}.png',mask)
+
     coco = COCO(json_file)
     images_and_anns = {}
     cat_ids = coco.getCatIds()
 
     for i in coco.imgs:
         img_data = coco.imgs[i]
+        filename = coco.imgs[i]['file_name']
 
         anns_ids = coco.getAnnIds(imgIds=img_data['id'], catIds=cat_ids, iscrowd=None)
         anns = coco.loadAnns(anns_ids)
         mask = load_masks_from_ann(anns)
+        save_mask()
 
-        filename = coco.imgs[i]['file_name']
         image_path = os.path.join(img_dir, filename)
         img_arr = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)/255.
 
@@ -91,11 +100,17 @@ def main():
     parser.add_argument("-s",
                         "--savePath",
                         help="path where the dict will be saved")
+    parser.add_argument("-m",
+                        "--maskDir",
+                        help="dir where our masks will be saved")
     args = parser.parse_args()
     save_and_process_json(json_file=args.json,
                           img_dir=args.imgDir,
                           save_path=args.savePath)
 
+
+if __name__ == '__main__':
+    main()
 
 
 

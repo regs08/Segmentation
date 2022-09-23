@@ -21,7 +21,7 @@ Arguments:
     -f --format
         format for the image/mask files. default is '_' + '[0-9]+'
     -e --extensions
-        extensions we run our search on must be a list. default is ['jpg', 'tiff', 'png', 'jpeg']
+        extensions we run our search on must be a list. default is ['.jpg', '.tiff', '.png', '.jpeg']
     -o --outputPath
         save path for our checked dict
 """

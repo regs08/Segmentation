@@ -34,7 +34,6 @@ def get_image_mask_files(source_dir, exts):
     for ext in exts:
         glob_path = os.path.join(source_dir, '*' + ext)
         file_list.extend(glob.glob(glob_path))
-    print(file_list)
     return file_list
 
 

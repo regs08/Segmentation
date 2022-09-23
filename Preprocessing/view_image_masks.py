@@ -9,9 +9,9 @@ default exts used to generate list: ['jpg', 'tiff', 'png', 'jpeg']
 Arguments:
 
     -h, --help            show this help message and exit
-    -o, --SourceDir
+    -src, --SourceDir
         Directory where we'll be drawing samples from
-    -s, --SearchDir
+    -ser, --SearchDir
         Directory where we'll be looking for pairs
 """
 
@@ -34,6 +34,7 @@ def get_image_mask_files(source_dir, exts):
     for ext in exts:
         glob_path = os.path.join(source_dir, '*' + ext)
         file_list.extend(glob.glob(glob_path))
+    print(file_list)
     return file_list
 
 

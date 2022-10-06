@@ -146,3 +146,14 @@ class HeightWisePatchifyGen(PatchifyGen):
         print(f'Saved {patch_num} patches to {self.save_dir}!!')
 
         return np.array(out_patches)
+image_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/Images/Pinot-Noir"
+image_patch_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/patchify/images/Pinot-Noir"
+
+mask_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/Masks/Pinot-Noir"
+mask_patch_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/patchify/masks/Pinot-Noir"
+
+height_wise_images = HeightWisePatchifyGen(image_dir, image_patch_dir)
+height_wise_images.patchify_and_save_from_all_data()
+
+height_wise_masks = HeightWisePatchifyGen(mask_dir, mask_patch_dir)
+height_wise_masks.patchify_and_save_from_all_data()

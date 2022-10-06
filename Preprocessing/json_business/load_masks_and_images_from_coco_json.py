@@ -64,6 +64,7 @@ def get_images_and_anns(json_file, img_dir, mask_dir):
 
         anns_ids = coco.getAnnIds(imgIds=img_data['id'], catIds=cat_ids, iscrowd=None)
         anns = coco.loadAnns(anns_ids)
+
         mask = load_masks_from_ann(anns)
         save_mask()
 

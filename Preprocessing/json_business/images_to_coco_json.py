@@ -68,26 +68,21 @@ def images_annotations_info(maskpath):
         # "images" info
         image = create_image_annotation(original_file_name, w, h, image_id)
         images.append(image)
-
         sub_masks = create_sub_masks(mask_image_open, w, h)
         for color, sub_mask in sub_masks.items():
             category_id = 1
             if not color == background_color:
                 # "annotations" info
                 polygons, segmentations = create_sub_mask_annotation(sub_mask)
-                # arr_test = np.array(sub_mask)
-                # rle = _mask.frPyObjects(segmentations, segmentations.shape[0], segmentations.shape[1])
-                # arr = np.asarray(sub_mask)
-                # arr_shape = arr.shape
-                # encoded = encode(np.asarray(sub_mask))
                 # Check if we have classes that are a multipolygon
                 if category_id in multipolygon_ids:
                     # Combine the polygons to calculate the bounding box and area
                     multi_poly = MultiPolygon(polygons)
                     annotation = create_annotation_format(multi_poly, segmentations, image_id, category_id, annotation_id)
-                    annotations.append(annotation)
+                    if annotation:
+                        annotations.append(annotation)
+                        annotation_id += 1
 
-                    annotation_id += 1
                 else:
                     for i in range(len(polygons)):
                         # Cleaner to recalculate this variable
@@ -95,23 +90,35 @@ def images_annotations_info(maskpath):
 
                         annotation = create_annotation_format(polygons[i], segmentation, image_id, category_id,
                                                               annotation_id)
+                        if annotation:
+                            annotations.append(annotation)
+                            annotation_id += 1
 
-                        annotations.append(annotation)
-                        annotation_id += 1
         image_id += 1
     return images, annotations, annotation_id
 
 
+def create_coco_anns(mask_path, outfile):
+    coco_format = get_coco_json_format()
+    coco_format["categories"] = create_category_annotation(category_ids)
+
+    coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
+    with open(outfile, "w") as of:
+        json.dump(coco_format, of, indent=4)
+
+    print("Created %d annotations for images in folder: %s" % (annotation_cnt, mask_path))
+
+    return
 if __name__ == "__main__":
     # Get the standard COCO JSON format
     coco_format = get_coco_json_format()
-    mask_path = ""
+    mask_path = "/Users/cole/PycharmProjects/Forgit/Image_Files/Original-Image-Masks/Masks/Pinot-Noir"
     # Create category section
     coco_format["categories"] = create_category_annotation(category_ids)
 
     # Create images and annotations sections
     coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
-    outfile = ""
+    outfile = "/Users/cole/PycharmProjects/Forgit/Image_Files/Original-Image-Masks/test_json.json"
     with open(outfile, "w") as of:
         json.dump(coco_format, of, indent=4)
 

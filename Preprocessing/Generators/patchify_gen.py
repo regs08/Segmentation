@@ -101,7 +101,26 @@ class HeightWisePatchifyGen(PatchGen):
     #overridding method
     ##
     def patchify_and_save_image_mask_file(self, image_mask_path):
+        """
+        loads in an image/mask an splits it into smaller images using the patchify function
+        overriding the function from super so that we split the image height wise
+        we are resizng the image to the closest whole partition of patch height.
+        patchify gets rid of excess img
+        e.g a width of 1077 --> //512 ~ 2.1 so the image will be resized to w*(512*2)=1024
+
+        :param image_mask_path: loads img/mask from path
+        :return:
+        """
+
         img_arr = self.load_image(image_mask_path)
+        w = img_arr.shape[1]
+        h = img_arr.shape[0]
+
+        new_width = round(w/float(self.patch_width)) * self.patch_width
+        dim = (new_width,h)
+
+        img_arr = cv2.resize(img_arr, dim)
+
         ####
         #setting our patch height to the height of the image
         ####
@@ -113,6 +132,7 @@ class HeightWisePatchifyGen(PatchGen):
             for j in range(patches.shape[1]):
                 single_patch = patches[i, j, :, :]
                 single_patch = np.array(single_patch, dtype='float32')[0]
+                single_patch = cv2.cvtColor(single_patch, cv2.COLOR_BGR2RGB)
 
                 if self.resize:
                     single_patch = cv2.resize(single_patch, (self.resize_height, self.resize_width))
@@ -142,9 +162,9 @@ mask_patch_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/pat
 # height_wise_masks = HeightWisePatchifyGen(mask_dir, mask_patch_dir,resize_height=1024, resize_width=1024, resize=True)
 # height_wise_masks.patchify_and_save_from_all_data()
 
-img=cv2.imread("/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/patchify/images/Pinot-Noir/IMG_0199_patch_2.png")
-img  = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-cv2.imshow('',img)
-cv2.waitKey()
+# img=cv2.imread("/Users/cole/PycharmProjects/Forgit/Segmentation/tesing_dir/patchify/images/Pinot-Noir/IMG_0199_patch_2.png")
+# img  = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+# cv2.imshow('',img)
+# cv2.waitKey()
 
 

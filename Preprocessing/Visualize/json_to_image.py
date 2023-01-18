@@ -69,6 +69,8 @@ def get_images_and_anns(json_file, img_dir, mask_dir):
         save_mask()
 
         image_path = os.path.join(img_dir, filename)
+        print(f'Creating mask for {filename}')
+
         img_arr = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)/255.
 
         images_and_anns[filename] = {'mask': mask,
@@ -78,41 +80,61 @@ def get_images_and_anns(json_file, img_dir, mask_dir):
     return images_and_anns
 
 
+def apply_binary_mask(image, mask, alpha=0.5):
+    """Apply the given mask to the image.
+    """
+    for c in range(3):
+        image[:, :, c] = np.where(mask == 1,
+                                  255,
+                                  image[:, :, c])
+    return image
+
+
+def apply_mask(image, mask, color, alpha=0.5):
+    """Apply the given mask to the image.
+    """
+    for c in range(3):
+        image[:, :, c] = np.where(mask == 1,
+                                  image[:, :, c] *
+                                  (1 - alpha) + alpha * color[c] * 255,
+                                  image[:, :, c])
+    return image
+
+
 def save_processed_dict(dict, save_path):
     with open(save_path, 'wb') as fp:
         pickle.dump(dict, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def save_and_process_json(json_file, img_dir, save_path):
-    processed_dict = get_images_and_anns(json_file, img_dir)
+def save_and_process_json(json_file, img_dir, mask_dir, save_path):
+    processed_dict = get_images_and_anns(json_file, img_dir, mask_dir)
     save_processed_dict(processed_dict, save_path)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Reading and processing our json files containing masks")
-
-    parser.add_argument("-d",
-                        "--imgDir",
-                        help="where our images are stored",
-                        type=str)
-    parser.add_argument("-j",
-                        "--json",
-                        help='path to the json file')
-    parser.add_argument("-s",
-                        "--savePath",
-                        help="path where the dict will be saved")
-    parser.add_argument("-m",
-                        "--maskDir",
-                        help="dir where our masks will be saved")
-    args = parser.parse_args()
-    save_and_process_json(json_file=args.json,
-                          img_dir=args.imgDir,
-                          save_path=args.savePath)
-
-
-if __name__ == '__main__':
-    main()
-
-
+# def main():
+#     parser = argparse.ArgumentParser(description="Reading and processing our json files containing masks")
+#
+#     parser.add_argument("-d",
+#                         "--imgDir",
+#                         help="where our images are stored",
+#                         type=str)
+#     parser.add_argument("-j",
+#                         "--json",
+#                         help='path to the json file')
+#     parser.add_argument("-s",
+#                         "--savePath",
+#                         help="path where the dict will be saved")
+#     parser.add_argument("-m",
+#                         "--maskDir",
+#                         help="dir where our masks will be saved")
+#     args = parser.parse_args()
+#     save_and_process_json(json_file=args.json,
+#                           img_dir=args.imgDir,
+#                           mask_dir=args.maskDir,
+#                           save_path=args.savePath)
+#
+#
+# if __name__ == '__main__':
+#     main()
 
 

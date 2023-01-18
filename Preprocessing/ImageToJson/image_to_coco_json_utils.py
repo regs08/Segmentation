@@ -7,8 +7,6 @@ from PIL import Image  # (pip install Pillow)
 import numpy as np  # (pip install numpy)
 from skimage import measure  # (pip install scikit-image)
 from shapely.geometry import Polygon, MultiPolygon  # (pip install Shapely)
-import os
-import json
 
 
 def create_sub_masks(mask_image, width, height):
@@ -92,21 +90,24 @@ def create_image_annotation(file_name, width, height, image_id):
 
 
 def create_annotation_format(polygon, segmentation, image_id, category_id, annotation_id):
-    min_x, min_y, max_x, max_y = polygon.bounds
-    width = max_x - min_x
-    height = max_y - min_y
-    bbox = (min_x, min_y, width, height)
-    area = polygon.area
+    if len(segmentation) > 0:
+        min_x, min_y, max_x, max_y = polygon.bounds
+        width = max_x - min_x
+        height = max_y - min_y
+        bbox = (min_x, min_y, width, height)
+        area = polygon.area
 
-    annotation = {
-        "segmentation": segmentation,
-        "area": area,
-        "iscrowd": 0,
-        "image_id": image_id,
-        "bbox": bbox,
-        "category_id": category_id,
-        "id": annotation_id
-    }
+        annotation = {
+            "segmentation": segmentation,
+            "area": area,
+            "iscrowd": 0,
+            "image_id": image_id,
+            "bbox": bbox,
+            "category_id": category_id,
+            "id": annotation_id
+        }
+    else:
+        annotation = {}
 
     return annotation
 

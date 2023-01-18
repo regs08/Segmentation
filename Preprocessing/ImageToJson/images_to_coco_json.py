@@ -1,20 +1,27 @@
+"""
+from git hub user https://github.com/chrise96
+
+with some modifications
+
+currently this will only work with one class. Be careful with defining the background color
+"""
+
 import glob
+import json
 
-from Segmentation.Preprocessing.json_business.image_to_coco_json_utils import *
-import pycocotools._mask as _mask
-
+from Segmentation.Preprocessing.ImageToJson.image_to_coco_json_utils import *
 
 # Label ids of the dataset
 category_ids = {
     "grape": 1
 }
 
-# Define which colors match which categories in the images
-# category_colors = {
-#     "(68, 1, 84)": 1,  # grape
-#
-# }
-background_color = '(68, 1, 84)'
+"""
+IMPORTANT
+keep getting the display showing all the background of an image. the background color needs to be properly defined 
+"""
+
+background_color = ['(0, 0, 0)', '(68, 1, 84)'] # need to add the other background_color here
 multipolygon_ids = [1]
 
 
@@ -35,19 +42,6 @@ def create_instance_mask_and_get_bbox(mask, color, alpha=.3):
     return mask
 
 
-
-        # for c in range(3):
-          #   img[:,:,c] = np.where(m[:,:, c]==1, #where there is a mask value
-          #                         image[:, :, c] *
-          #                         (1 - alpha) + alpha * color[c] * 255,
-          #                #img[:,:,c] * color[c],
-          #                 img[:,:,c])
-          #   img = mrcnn.visualize.draw_box(img,
-          #                                  r['rois'][i],
-          #                                  color[c])
-# Get "images" and "annotations" info
-
-
 def images_annotations_info(maskpath):
     # This id will be automatically increased as we go
     annotation_id = 0
@@ -57,6 +51,7 @@ def images_annotations_info(maskpath):
     glob_path = os.path.join(maskpath, "*.png")
 
     for mask_image in glob.glob(glob_path):
+        print(f'creating annotation for mask_image: {mask_image}')
         # The mask image is *.png but the original image is *.jpg.
         # We make a reference to the original file in the COCO JSON file
         original_file_name = os.path.basename(mask_image)
@@ -71,7 +66,7 @@ def images_annotations_info(maskpath):
         sub_masks = create_sub_masks(mask_image_open, w, h)
         for color, sub_mask in sub_masks.items():
             category_id = 1
-            if not color == background_color:
+            if color not in  background_color:
                 # "annotations" info
                 polygons, segmentations = create_sub_mask_annotation(sub_mask)
                 # Check if we have classes that are a multipolygon
@@ -109,24 +104,24 @@ def create_coco_anns(mask_path, outfile):
     print("Created %d annotations for images in folder: %s" % (annotation_cnt, mask_path))
 
     return
+
+
 if __name__ == "__main__":
     # Get the standard COCO JSON format
+    mask_path = ""
+    outfile = ""
+
+    create_coco_anns(mask_path, outfile)
+
     coco_format = get_coco_json_format()
-    mask_path = "/Users/cole/PycharmProjects/Forgit/Image_Files/Original-Image-Masks/Masks/Pinot-Noir"
     # Create category section
     coco_format["categories"] = create_category_annotation(category_ids)
 
     # Create images and annotations sections
     coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
-    outfile = "/Users/cole/PycharmProjects/Forgit/Image_Files/Original-Image-Masks/test_json.json"
     with open(outfile, "w") as of:
         json.dump(coco_format, of, indent=4)
 
     print("Created %d annotations for images in folder: %s" % (annotation_cnt, mask_path))
 
 
-
-#did some slight modifications. creating an if statement to filter out the background color. getting rid of the outlier key
-#in the dicts.
-
-#test bbox array may have to get 3d option it it doesnt work .

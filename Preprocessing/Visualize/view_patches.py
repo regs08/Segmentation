@@ -123,21 +123,5 @@ def main():
     args = parser.parse_args()
 
 
-# if __name__ == '__main__':
-#     main()
-
-
-#TODONE create plotting function using subplots and pyplot
-#TODO fix title size add title for figure as well
-
-#########
-# testing plot function
-#########
-
-
-def test():
-    img_path = "/Users/cole/PycharmProjects/Forgit/Image_Files/Original-Image-Masks/Images/Pinot-Noir/IMG_1072.png"
-    patch_save_dir = "/Users/cole/PycharmProjects/Forgit/Image_Files/Patchify/Images"
-    plot_patches(img_path, patch_save_dir)
-
-test()
+if __name__ == '__main__':
+    main()

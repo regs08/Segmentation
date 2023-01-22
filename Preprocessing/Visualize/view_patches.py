@@ -107,7 +107,6 @@ def plot_patches(orig_image_mask_path, patchify_save_dir, ext='.png'):
     create_plot(orig_img_mask_arr, patch_arr_list, orig_filename)
 
 
-
 def main():
     parser = argparse.ArgumentParser(
         description="Viewing our image/mask patches")
@@ -122,6 +121,7 @@ def main():
                         type=str)
     args = parser.parse_args()
 
+    plot_patches(args.OriginalImageMaskPath, args.SavePatchDir)
 
 if __name__ == '__main__':
     main()

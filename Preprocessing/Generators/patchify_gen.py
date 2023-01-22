@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 from patchify import patchify
 from Segmentation.Preprocessing.Generators.gen_from_file_list import GenFromFileList
-
+from math import ceil
 class PatchGen(GenFromFileList):
     def __init__(self,
                  image_dir,
@@ -132,6 +132,7 @@ class HeightWisePatchifyGen(PatchGen):
         #setting our patch height to the height of the image
         ####
         patch_height = img_arr.shape[0]
+        print(self.patch_width)
         patches = patchify(img_arr, (patch_height, self.patch_width, 3), step=self.step)
         out_patches = []
         patch_num = 0
@@ -167,3 +168,38 @@ class HeightWisePatchifyGen(PatchGen):
         dim = (new_width,h)
 
         return cv2.resize(img_arr, dim)
+
+
+class SplitInNumPatchesHieghtWise(HeightWisePatchifyGen):
+    """
+    instead of setting num pixes were just going to give a number of splits we want to make. e.g 2 will split the image in
+    two, 4 in four
+    """
+    def __init__(self,num_splits, image_dir, save_dir):
+        self.num_splits = num_splits
+        self.image_dir = image_dir
+        self.save_dir = save_dir
+
+        super().__init__(image_dir=self.image_dir, save_dir=self.save_dir)
+
+    def set_patch_width_and_step(self, img_width):
+        self.patch_width = ceil(img_width/ self.num_splits)
+        self.step = self.patch_width
+
+    def prep_img_mask_arr(self, img_arr):
+        """
+        overriding from super just gonna change it so we can pass a number of splits. rounds to the nearest pixel so
+        we habe even patches
+        :param img_arr:
+        :return:
+        """
+        h,w,_= img_arr.shape
+
+        self.set_patch_width_and_step(w)
+        if w % self.num_splits > 0:
+            new_width = self.patch_width*self.num_splits
+            dims = (new_width, h)
+            return cv2.resize(img_arr, dims)
+        print(f'orig width {w}\nNew width {self.patch_width}')
+
+        return img_arr

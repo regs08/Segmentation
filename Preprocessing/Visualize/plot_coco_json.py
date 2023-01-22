@@ -7,24 +7,14 @@ import sys
 mcrnn_dir = "/Users/cole/PycharmProjects/Forgit/Mask_RCNN"
 sys.path.append(mcrnn_dir)
 
-from mrcnn.visualize import display_instances, display_top_masks
+from mrcnn.visualize import display_instances
 from mrcnn.utils import extract_bboxes
-
 from mrcnn.utils import Dataset
-from matplotlib import pyplot as plt
-
-from mrcnn.config import Config
-from mrcnn.model import MaskRCNN
-
-
-from mrcnn import model as modellib, utils
-from PIL import Image, ImageDraw
-
 from pycocotools.coco import COCO
 import random
 
 
-class CocoLikeDataset(utils.Dataset):
+class CocoLikeDataset(Dataset):
     """ Generates a COCO-like dataset, i.e. an image dataset annotated in the style of the COCO dataset.
         See http://cocodataset.org/#home for more information.
     """
@@ -103,28 +93,6 @@ class CocoLikeDataset(utils.Dataset):
             class_ids: a 1D array of class IDs of the instance masks.
         """
 
-        ###################
-        # helper functions#
-        ###################
-        # def is_mask_rle():
-        #     try:
-        #         is_rle = 'counts' in annotations[0]['segmentation'].keys()
-        #     except AttributeError:
-        #         return False
-        #     return is_rle
-        ################################################################################################################
-        # note we had this as a if statement because i thought it would make a difference between if the ann is in rle #
-        # format or not. it doesn't...
-        ################################################################################################################
-        # def get_instance_masks_non_rle():
-        #     for segmentation in ann['segmentation']:
-        #         mask_draw.polygon(segmentation, fill=1)
-        #         bool_array = np.array(mask) > 0
-        #         instance_masks.append(bool_array)
-        #         class_ids.append(class_id)
-        ######
-
-        ######
         def get_instance_masks():
             temp = np.array(self.coco_jsons.annToMask(ann))
             bool_array = np.array(temp) > 0
@@ -148,6 +116,7 @@ class CocoLikeDataset(utils.Dataset):
         class_ids = np.array(class_ids, dtype=np.int32)
 
         return mask, class_ids
+
 
 def example(json_file='', image_dir=''):
     dataset = CocoLikeDataset()
@@ -201,5 +170,5 @@ def plot_from_json(json_file, image_dir):
     display_instances(image, bbox, mask, class_ids, dataset.class_names)
 
 
-if __name__ == '__main__':
-    example()
+# if __name__ == '__main__':
+#     example()

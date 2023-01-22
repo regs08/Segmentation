@@ -108,7 +108,7 @@ def save_processed_dict(dict, save_path):
 
 def save_and_process_json(json_file, img_dir, mask_dir, save_path):
     processed_dict = get_images_and_anns(json_file, img_dir, mask_dir)
-    save_processed_dict(processed_dict, save_path)
+    # save_processed_dict(processed_dict, save_path)
 
 
 # def main():

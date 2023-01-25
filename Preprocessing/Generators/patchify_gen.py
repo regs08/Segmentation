@@ -21,6 +21,8 @@ import numpy as np
 from patchify import patchify
 from Segmentation.Preprocessing.Generators.gen_from_file_list import GenFromFileList
 from math import ceil
+
+
 class PatchGen(GenFromFileList):
     def __init__(self,
                  image_dir,
@@ -78,7 +80,6 @@ class PatchGen(GenFromFileList):
         dim = (new_width,new_height)
 
         return cv2.resize(img_arr, dim)
-
     def patchify_and_save_image_mask_file(self, image_mask_path):
         img_arr = self.load_image(image_mask_path)
         img_arr = self.prep_img_mask_arr(img_arr)
@@ -200,6 +201,5 @@ class SplitInNumPatchesHieghtWise(HeightWisePatchifyGen):
             new_width = self.patch_width*self.num_splits
             dims = (new_width, h)
             return cv2.resize(img_arr, dims)
-        print(f'orig width {w}\nNew width {self.patch_width}')
 
         return img_arr

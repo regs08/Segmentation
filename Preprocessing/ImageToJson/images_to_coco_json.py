@@ -8,13 +8,8 @@ currently this will only work with one class. Be careful with defining the backg
 
 import glob
 import json
-
+import os
 from Segmentation.Preprocessing.ImageToJson.image_to_coco_json_utils import *
-
-# Label ids of the dataset
-category_ids = {
-    "grape": 1
-}
 
 """
 IMPORTANT
@@ -65,6 +60,9 @@ def images_annotations_info(maskpath):
         images.append(image)
         sub_masks = create_sub_masks(mask_image_open, w, h)
         for color, sub_mask in sub_masks.items():
+            """
+            note setting category id to default one. this will only work with one class
+            """
             category_id = 1
             if color not in  background_color:
                 # "annotations" info
@@ -93,9 +91,9 @@ def images_annotations_info(maskpath):
     return images, annotations, annotation_id
 
 
-def create_coco_anns(mask_path, outfile):
+def create_coco_anns(mask_path, outfile, cat_ids):
     coco_format = get_coco_json_format()
-    coco_format["categories"] = create_category_annotation(category_ids)
+    coco_format["categories"] = create_category_annotation(cat_ids)
 
     coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)
     with open(outfile, "w") as of:
@@ -110,12 +108,12 @@ if __name__ == "__main__":
     # Get the standard COCO JSON format
     mask_path = ""
     outfile = ""
-
-    create_coco_anns(mask_path, outfile)
+    cat_ids = dict()
+    create_coco_anns(mask_path, outfile, cat_ids)
 
     coco_format = get_coco_json_format()
     # Create category section
-    coco_format["categories"] = create_category_annotation(category_ids)
+    coco_format["categories"] = create_category_annotation(cat_ids)
 
     # Create images and annotations sections
     coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(mask_path)

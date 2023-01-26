@@ -133,7 +133,6 @@ class HeightWisePatchifyGen(PatchGen):
         #setting our patch height to the height of the image
         ####
         patch_height = img_arr.shape[0]
-        print(self.patch_width)
         patches = patchify(img_arr, (patch_height, self.patch_width, 3), step=self.step)
         out_patches = []
         patch_num = 0

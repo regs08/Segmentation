@@ -51,7 +51,6 @@ def view_random_image_mask_pair(orig_image_dir, orig_mask_dir, patchify_image_di
     print(f"Displaying mask patch for file {rand_file_name}")
     plot_patches(rand_mask_path, patchify_mask_dir)
 
-        #######################
 
 """
 creating our coco style json 
@@ -92,8 +91,6 @@ def preprocess(orig_image_mask_dir,
     patchify_images_and_masks(orig_image_dir=orig_image_dir,
                               orig_mask_dir=orig_mask_dir,
                               patch_dir=patch_dir)
-
-
 
     print('Viewing random patchify image and mask pair...')
     view_random_image_mask_pair(orig_image_dir, orig_mask_dir, patchify_image_dir, patchify_mask_dir)

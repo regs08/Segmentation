@@ -1,7 +1,7 @@
 from Segmentation.Preprocessing.ImageToJson.images_to_coco_json \
     import get_coco_json_format, create_category_annotation, create_image_annotation
 from Segmentation.Preprocessing.Visualize.plot_coco_json import plot_from_json
-from Segmentation.Model.Predict import predict_on_image, define_prediction_model
+from Segmentation.Model.Predict.Predict import predict_on_image, define_prediction_model
 from Segmentation.Postprocessing.PredictionToCoco.utils import create_prediction_submask_anns, save_json
 
 import os

@@ -21,15 +21,28 @@ splitting our images via patchify
 """
 
 
-def patchify_images_and_masks(orig_image_dir, orig_mask_dir, patch_dir):
+def patchify_images_and_masks(orig_image_dir, orig_mask_dir, patch_dir, resize=False):
+    """
+    patchifies our images based on the generator selected
 
+    :param orig_image_dir:
+    :param orig_mask_dir:
+    :param patch_dir: outdir to where our patches will be saved
+    :param resize: if we want to resize our patches. Note the default size is that of the MRCNN, (1024, 1024 , 3)
+    :return:
+    """
     patchify_image_dir = os.path.join(patch_dir, 'Images')
     patchify_mask_dir = os.path.join(patch_dir, 'Masks')
 
-    patchify_image_gen = SplitInNumPatchesHieghtWise(image_dir=orig_image_dir, save_dir=patchify_image_dir, num_splits=2)
+    patchify_image_gen = SplitInNumPatchesHieghtWise(image_dir=orig_image_dir,
+                                                     save_dir=patchify_image_dir,
+                                                     num_splits=2,
+                                                     resize=resize)
 
     patchify_mask_gen = SplitInNumPatchesHieghtWise(image_dir=orig_mask_dir,
-                                              save_dir=patchify_mask_dir, num_splits=2)
+                                                    save_dir=patchify_mask_dir,
+                                                    num_splits=2,
+                                                    resize=resize)
 
 
     patchify_image_gen.patchify_and_save_from_all_data()
@@ -68,7 +81,8 @@ def preprocess(orig_image_mask_dir,
                cat_ids,
                out_dir,
                check_and_remove_masks=True,
-               min_num_masks=False):
+               min_num_masks=False,
+               resize=False):
     """
     wrapper function for the functions above. First we check for matching pairs. then patchify the images. We check to
     make sure our images have a min number
@@ -90,7 +104,8 @@ def preprocess(orig_image_mask_dir,
     print('Patchifying images..')
     patchify_images_and_masks(orig_image_dir=orig_image_dir,
                               orig_mask_dir=orig_mask_dir,
-                              patch_dir=patch_dir)
+                              patch_dir=patch_dir,
+                              resize=resize)
 
     print('Viewing random patchify image and mask pair...')
     view_random_image_mask_pair(orig_image_dir, orig_mask_dir, patchify_image_dir, patchify_mask_dir)

@@ -32,8 +32,8 @@ class PatchGen(GenFromFileList):
                  patch_width=512,
                  step=512,
                  resize=False,
-                 resize_height=256,
-                 resize_width=256,
+                 resize_height=1024,
+                 resize_width=1024,
                  ):
         super().__init__(image_dir=image_dir)
         self.save_dir = save_dir
@@ -80,6 +80,7 @@ class PatchGen(GenFromFileList):
         dim = (new_width,new_height)
 
         return cv2.resize(img_arr, dim)
+
     def patchify_and_save_image_mask_file(self, image_mask_path):
         img_arr = self.load_image(image_mask_path)
         img_arr = self.prep_img_mask_arr(img_arr)
@@ -175,12 +176,13 @@ class SplitInNumPatchesHieghtWise(HeightWisePatchifyGen):
     instead of setting num pixes were just going to give a number of splits we want to make. e.g 2 will split the image in
     two, 4 in four
     """
-    def __init__(self,num_splits, image_dir, save_dir):
+    def __init__(self,num_splits, image_dir, save_dir, resize):
         self.num_splits = num_splits
         self.image_dir = image_dir
         self.save_dir = save_dir
+        self.resize = resize
 
-        super().__init__(image_dir=self.image_dir, save_dir=self.save_dir)
+        super().__init__(image_dir=self.image_dir, save_dir=self.save_dir, resize=self.resize)
 
     def set_patch_width_and_step(self, img_width):
         self.patch_width = ceil(img_width/ self.num_splits)

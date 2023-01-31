@@ -3,6 +3,10 @@ from mrcnn.utils import Dataset
 from sklearn.model_selection import train_test_split
 import random
 import json
+from PIL import Image, ImageDraw
+import os
+import numpy as np
+
 seed_no = 42
 random.seed(seed_no)
 
@@ -65,7 +69,7 @@ class CocoLikeDataset(Dataset):
         train_set, val_set = train_test_split(image_set,
                                               test_size=val_set_size + test_set_size,
                                               random_state=seed_no)
-        val_set, test_set = train_test_split(val_set, test_size=.5, random_state=seed_no)
+        test_set, val_set = train_test_split(val_set, test_size=.5, random_state=seed_no)
         if subset == 'train':
             images = train_set
         if subset == 'val':
@@ -129,3 +133,24 @@ class CocoLikeDataset(Dataset):
         class_ids = np.array(class_ids, dtype=np.int32)
 
         return mask, class_ids
+
+
+def get_train_val_test_set(json_file, image_dir):
+
+    dataset_train = CocoLikeDataset()
+    dataset_train.load_data(json_file, image_dir, subset='train')
+    dataset_train.prepare()
+
+    dataset_val = CocoLikeDataset()
+    dataset_val.load_data(json_file, image_dir, subset='val')
+    dataset_val.prepare()
+
+    dataset_test = CocoLikeDataset()
+    dataset_test.load_data(json_file, image_dir, subset='test')
+    dataset_test.prepare()
+
+    print(f'num training images {dataset_train.num_images}')
+    print(f'num val images {dataset_val.num_images}')
+    print(f'num test images {dataset_test.num_images}')
+
+    return dataset_train, dataset_val, dataset_test

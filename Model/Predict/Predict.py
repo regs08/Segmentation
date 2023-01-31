@@ -6,31 +6,16 @@ import sys
 mcrnn_dir = "/Users/cole/PycharmProjects/Forgit/Segmentation/Preprocessing/Mask_RCNN"
 sys.path.append(mcrnn_dir)
 from Segmentation.Preprocessing.Visualize.json_to_image import apply_mask
-import mrcnn
-import mrcnn.config
-import mrcnn.model
-import mrcnn.visualize
+from mrcnn.model import MaskRCNN
+from mrcnn.visualize import display_instances
+from Segmentation.Model.Configs.PredictConfig import SimpleConfig, CLASS_NAMES
 import cv2
 import os
 import numpy as np
 
 # load the class label names from disk, one label per line
 # CLASS_NAMES = open("coco_labels.txt").read().strip().split("\n")
-
-CLASS_NAMES = ['BG', 'grape']
-
-
-class SimpleConfig(mrcnn.config.Config):
-    # Give the configuration a recognizable name
-    NAME = "coco_inference"
-
-    # set the number of GPUs to use along with the number of images per GPU
-    GPU_COUNT = 1
-    IMAGES_PER_GPU = 1
-
-    # Number of classes = number of classes + 1 (+1 for the background). The background class is named BG
-    NUM_CLASSES = len(CLASS_NAMES)
-
+config = SimpleConfig()
 
 def save_predictions(pred, filename, save_dir, ext='.png'):
     """
@@ -58,11 +43,12 @@ def save_predictions(pred, filename, save_dir, ext='.png'):
     print(f'Prediction for image {filename} saved to {save_path}!')
     return mask
 
+
 def define_prediction_model(weight_path):
 # Initialize the Mask R-CNN model for inference and then load the weights.
 # This step builds the Keras model architecture.
-    model = mrcnn.model.MaskRCNN(mode="inference",
-                                 config=SimpleConfig(),
+    model = MaskRCNN(mode="inference",
+                                 config=config,
                                  model_dir=os.getcwd())
     # Load the weights into the model.
     model.load_weights(filepath=weight_path,
@@ -90,12 +76,12 @@ def predict_on_image(image_path, model):
 
 
 def display_prediction(img, r):
-    mrcnn.visualize.display_instances(image=img,
-                                      boxes=r['rois'],
-                                      masks=r['masks'],
-                                      class_ids=r['class_ids'],
-                                      class_names=CLASS_NAMES,
-                                      scores=r['scores'])
+    display_instances(image=img,
+                    boxes=r['rois'],
+                    masks=r['masks'],
+                    class_ids=r['class_ids'],
+                    class_names=CLASS_NAMES,
+                    scores=r['scores'])
 
 
 def predict_on_images(model,

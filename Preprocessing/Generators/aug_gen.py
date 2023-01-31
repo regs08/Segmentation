@@ -6,11 +6,11 @@ class that inherits the FileListGen and will augment the batched images to augme
 import os
 import matplotlib.pyplot as plt
 from random import sample
-from Segmentation.Preprocessing.Generators import gen_from_file_list
+from Segmentation.Preprocessing.Generators.gen_from_file_list import GenFromFileList
 import cv2
 
 
-class AugImageMaskGen(gen_from_file_list.GenFromFileList):
+class AugImageMaskGen(GenFromFileList):
     """
     transform object from the Albumentations library
     mask_dir where our masks our stored

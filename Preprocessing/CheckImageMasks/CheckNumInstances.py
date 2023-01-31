@@ -52,7 +52,7 @@ def get_num_masks(mask_path, min_instances):
         by_color[pixel] += 1
     colors = list(by_color.keys())
     num_masks = len(colors) - 1  #-1 for background
-
+    print(num_masks)
     if num_masks < min_instances:
         filename = os.path.basename(mask_path)
         orig_filename = filename.split('_patch')[0]

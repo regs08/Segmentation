@@ -6,14 +6,13 @@
 
 from mrcnn.config import Config
 
+
 class GrapeConfig(Config):
     # define the name of the configuration
     NAME = "grape_cfg_coco"
     IMAGES_PER_GPU = 1
     NUM_CLASSES = 1 + 1
     GPU_COUNT = 1
-    # number of training steps per epoch
-    DETECTION_MIN_CONFIDENCE = 0.9 # Skip detections with < 90% confidence
 
     def get_attr_as_dict(self, save=False, out_file=""):
         """

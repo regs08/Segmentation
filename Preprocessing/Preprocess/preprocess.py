@@ -30,8 +30,6 @@ def get_args():
                         "--MinNumMasks",
                         help="min number of masks to accept per mask",
                         default=False)
-
-
     return parser.parse_args()
 
 

@@ -18,7 +18,6 @@ from datetime import date
 
 ####    MRCNN IMPORTS       ####
 from mrcnn.model import MaskRCNN
-
 ####
 
 ####    LOCAL IMPORTS       ####

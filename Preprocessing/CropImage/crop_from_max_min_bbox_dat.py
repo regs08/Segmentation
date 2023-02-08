@@ -1,4 +1,4 @@
-from Segmentation.Preprocessing.CropImage.crop_utils import crop_images_from_bbox_dat
+from Segmentation.Preprocessing.CropImage.crop_utils import crop_images_from_max_min_bbox_dat
 
 
 def get_args():
@@ -26,11 +26,12 @@ def get_args():
 
     return parser.parse_args()
 
-
+#todo fix params
 if __name__ == '__main__':
     args = get_args()
 
-    crop_images_from_bbox_dat(coco_json=args.CocoJson,
-                              image_dir=args.ImageDir,
-                              mask_dir=args.MaskDir,
-                              save_dir=args.SaveDir)
+    crop_images_from_max_min_bbox_dat(coco_json=args.CocoJson,
+                                      image_dir=args.ImageDir,
+                                      mask_dir=args.MaskDir,
+                                      image_save_dir=args.SaveDir,
+                                      mask_save_dir=args)

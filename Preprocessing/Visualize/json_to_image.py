@@ -3,13 +3,7 @@ Loading in our json file from hasty_ai as coco format. Does some processing wher
 numpy array. We create a mask as a numpy array where each mask is a unique color. we also load in our anns data from the
 coco format.
 
-we return a dictionary where the keys are the filenames and contains a dictionary continaing..
-{filename:
-    {
-    mask: np.array,
-    img_arr: np.array,
-    anns: coco.anns
-    }
+
 
 
 
@@ -61,7 +55,6 @@ def get_images_and_anns(json_file, img_dir, mask_dir):
     for i in coco.imgs:
         img_data = coco.imgs[i]
         filename = coco.imgs[i]['file_name']
-
         anns_ids = coco.getAnnIds(imgIds=img_data['id'], catIds=cat_ids, iscrowd=None)
         anns = coco.loadAnns(anns_ids)
 

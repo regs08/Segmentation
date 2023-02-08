@@ -11,20 +11,20 @@ from PIL import Image
 from collections import defaultdict
 
 
-def check_masks_for_min_masks_and_remove_replace(min_instances, patch_dir, orig_image_mask_dir):
+def check_masks_for_min_masks_and_remove_replace(min_instances, out_dir, orig_image_mask_dir):
     """
     checks our masks for the min number of masks. if they don't have the min number they are deleted and replaced with
     the orginal image.
     :param min_instances:
-    :param patch_dir: where our patches our stored. we check these
+    :param out_dir: where our patches our stored. we check these
     :param orig_image_mask_dir: original images. replace from these
     :return:
     """
     orig_image_dir = os.path.join(orig_image_mask_dir, 'Images')
     orig_mask_dir = os.path.join(orig_image_mask_dir, 'Masks')
 
-    patch_image_dir = os.path.join(patch_dir, 'Images')
-    patch_mask_dir = os.path.join(patch_dir, 'Masks')
+    patch_image_dir = os.path.join(out_dir, 'Images')
+    patch_mask_dir = os.path.join(out_dir, 'Masks')
 
     glob_path = os.path.join(patch_mask_dir, '*')
     mask_paths = glob.glob(glob_path)

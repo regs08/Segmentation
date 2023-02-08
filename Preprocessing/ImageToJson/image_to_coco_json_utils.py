@@ -7,6 +7,9 @@ from PIL import Image  # (pip install Pillow)
 import numpy as np  # (pip install numpy)
 from skimage import measure  # (pip install scikit-image)
 from shapely.geometry import Polygon, MultiPolygon  # (pip install Shapely)
+import os
+import json
+
 
 
 def create_sub_masks(mask_image, width, height):
@@ -124,3 +127,12 @@ def get_coco_json_format():
 
     return coco_format
 
+
+def rename_coco_json_ext_to_png(coco_json):
+    with open(coco_json, "r") as file:
+        coco_dat = json.load(file)
+
+    for images in coco_dat['images']:
+        images['file_name'] = os.path.splitext(images['file_name'])[0] +'.png'
+    with open(coco_json, "w") as outfile:
+        json.dump(coco_dat, outfile, indent=4)

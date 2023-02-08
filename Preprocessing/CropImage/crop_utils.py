@@ -1,5 +1,7 @@
 """
 Cropping an image based off of bbox coords. e.g cropping out the space where now object instances are
+todo create class for cropping
+
 """
 import json
 import numpy as np
@@ -7,10 +9,10 @@ from PIL import Image
 import os
 
 
-def crop_images_from_bbox_dat(coco_json, image_dir, mask_dir, save_dir):
+def crop_images_from_max_min_bbox_dat(coco_json, image_dir, mask_dir, image_save_dir, mask_save_dir):
     """
     wrapper main function. loads in filename, bbox data, and img_id from our coco json. gets the crop coords. crops our
-    image and saves it
+    image based on the xmin, ymin, xmax, ymax, of ALL bboxesand saves it
     :param coco_json: annotated data. note bbox format is: xmin, ymin, w, h
     :param image_dir: where our to be cropped images are
     :param mask_dir: where our to be cropped masks are
@@ -21,7 +23,7 @@ def crop_images_from_bbox_dat(coco_json, image_dir, mask_dir, save_dir):
     images, anns = get_image_load_image_and_ann_info_from_coco(coco_json)
     bboxes = get_img_id_filename_bbox_from_img_anns_and_anns(images, anns)
 
-    crop_and_save_images_and_masks(image_dir, mask_dir, save_dir, bboxes)
+    crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_save_dir, bboxes)
 
 
 def get_image_load_image_and_ann_info_from_coco(coco_json):
@@ -58,7 +60,7 @@ def get_img_id_filename_bbox_from_img_anns_and_anns(images, anns):
         current_bbox = {
             'file_name': image_id_filenames[id],
             'image_id': id,
-            'bboxes': np.array(bboxes)
+            'bboxes': np.array(bboxes).astype(int)
         }
 
         bboxes_per_image.append(current_bbox)
@@ -84,10 +86,10 @@ def get_crop_coords(arr):
     return [np.min(xmin), np.min(ymin), np.max(xmax), np.max(ymax)]
 
 
-def crop_and_save_images_and_masks(image_dir, mask_dir, save_dir, bbox_arr):
-    for bbox_dat in bbox_arr:
-        crop_and_save_image_from_min_max_bbox(bbox_dat, image_dir, os.path.join(save_dir, "Images"))
-        crop_and_save_image_from_min_max_bbox(bbox_dat, mask_dir, os.path.join(save_dir, "Masks"))
+def crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_save_dir, all_bboxes):
+    for bbox_dat in all_bboxes:
+        crop_and_save_image_from_min_max_bbox(bbox_dat, image_dir, image_save_dir)
+        crop_and_save_image_from_min_max_bbox(bbox_dat, mask_dir, mask_save_dir)
 
 
 def crop_and_save_image_from_min_max_bbox(bbox_dat, image_dir, save_dir):

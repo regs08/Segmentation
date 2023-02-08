@@ -123,6 +123,7 @@ class CocoLikeDataset(Dataset):
         for annotation in annotations:
             class_id = annotation['category_id']
             mask = Image.new('1', (image_info['width'], image_info['height']))
+
             mask_draw = ImageDraw.ImageDraw(mask, '1')
             temp = np.array(self.coco_jsons.annToMask(annotation))
             bool_array = np.array(temp) > 0

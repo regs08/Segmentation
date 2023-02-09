@@ -108,7 +108,7 @@ def merge_bboxes_from_image_as_dict(all_img_bboxes):
     return out
 
 
-def plot_bboxes(bboxes, img_filename):
+def plot_bboxes(bboxes, image_dir, img_filename):
     fig, ax = plt.subplots()
     for coords in bboxes:
         xmin, ymin, xmax, ymax = coords

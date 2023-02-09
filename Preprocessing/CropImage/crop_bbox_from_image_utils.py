@@ -108,7 +108,7 @@ def merge_bboxes_from_image_as_dict(all_img_bboxes):
     return out
 
 
-def plot_bboxes(bboxes, image_dir, img_filename):
+def plot_bboxes(bboxes, image_dir, filename):
     fig, ax = plt.subplots()
     for coords in bboxes:
         xmin, ymin, xmax, ymax = coords
@@ -116,8 +116,8 @@ def plot_bboxes(bboxes, image_dir, img_filename):
         h = ymax - ymin
         rect = patches.Rectangle((xmin, ymin), w, h, linewidth=1, edgecolor='r', facecolor='none')
         ax.add_patch(rect)
-        plt.title(img_filename)
-    im_path = os.path.join(image_dir, img_filename)
+        plt.title(filename)
+    im_path = os.path.join(image_dir, filename)
     im = Image.open(im_path)
 
     # Display the image

@@ -4,7 +4,9 @@ from Segmentation.Preprocessing.CropImage.crop_utils \
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import glob
 from PIL import Image
+from math import ceil
 import os
 
 
@@ -41,49 +43,6 @@ def merge_boxes(box1, box2):
     return merged_boxes
 
 
-def get_crop_all_bboxes_from_images(all_bboxes):
-    for i, bbox_dat in enumerate(all_bboxes):
-
-
-        bboxes = bbox_dat['bboxes']
-        img_filename = bbox_dat['file_name']
-
-        formatted_coords = [get_coords(bbox) for bbox in bboxes]
-        print('bboxes', formatted_coords)
-
-        """
-        so we take in a list of formatted -xmin, ymin, xmax, ymax- bboxes iterate through them. and once the bbox list we search 
-        through is the same length as the output we know there are no new pairs? 
-        """
-
-
-
-        bbox1 = formatted_coords[0]
-        all_crop_coords = []
-        crop_coords = get_bbox_crops(bbox1, formatted_coords[1:], all_crop_coords)
-
-        fig, ax = plt.subplots()
-
-        for coords in all_crop_coords:
-
-            xmin, ymin, xmax, ymax = coords
-            w = xmax-xmin
-            h = ymax-ymin
-            rect = patches.Rectangle((xmin, ymin), w, h, linewidth=1, edgecolor='r', facecolor='none')
-            ax.add_patch(rect)
-
-        im_path = os.path.join(image_dir, img_filename)
-        print(f'plotting joined boxes for filename {img_filename}, {i}')
-        im = Image.open(im_path)
-
-        # Display the image
-        ax.imshow(im)
-
-        plt.show()
-
-        #
-
-
 def merge_bboxes_from_image_as_dict(all_img_bboxes):
     """
     takes in all the bboxes from our images and returns a list of dictionaries
@@ -106,24 +65,6 @@ def merge_bboxes_from_image_as_dict(all_img_bboxes):
         }
         out.append(crop_dict)
     return out
-
-
-def plot_bboxes(bboxes, image_dir, filename):
-    fig, ax = plt.subplots()
-    for coords in bboxes:
-        xmin, ymin, xmax, ymax = coords
-        w = xmax - xmin
-        h = ymax - ymin
-        rect = patches.Rectangle((xmin, ymin), w, h, linewidth=1, edgecolor='r', facecolor='none')
-        ax.add_patch(rect)
-        plt.title(filename)
-    im_path = os.path.join(image_dir, filename)
-    im = Image.open(im_path)
-
-    # Display the image
-    ax.imshow(im)
-
-    plt.show()
 
 
 def find_overlapping_and_merge_bboxes(bboxes, img_filename=None):
@@ -169,6 +110,7 @@ think we got em
         i+=1
     return bboxes
 
+
 def crop_images_from_bbox(crop_me, image_dir, save_dir):
     """
     where crop me is a list of dictionaries         c
@@ -191,3 +133,48 @@ def crop_images_from_bbox(crop_me, image_dir, save_dir):
             save_path = os.path.join(save_dir, cropped_filename)
             cropped_img = im.crop(crop_coords)
             cropped_img.save(save_path)
+
+
+###
+#Plotting
+###
+
+
+def plot_bboxes(bboxes, image_dir, filename):
+    fig, ax = plt.subplots()
+    for coords in bboxes:
+        xmin, ymin, xmax, ymax = coords
+        w = xmax - xmin
+        h = ymax - ymin
+        rect = patches.Rectangle((xmin, ymin), w, h, linewidth=1, edgecolor='r', facecolor='none')
+        ax.add_patch(rect)
+        plt.title(filename)
+    im_path = os.path.join(image_dir, filename)
+    im = Image.open(im_path)
+
+    # Display the image
+    ax.imshow(im)
+
+    plt.show()
+
+
+def plot_crops_from_single_image(filename, save_dir):
+    """
+    takes in a filename searches the save dir where the image is saved, gets all crops
+    then plots them in a subplot
+
+    :param filename: filename withoit ext e.g IMG_123
+    :param save_dir: where our image is stored
+    :return:
+    """
+
+    glob_path = os.path.join(save_dir, filename + '*')
+    files = glob.glob(glob_path)
+    num_crops = len(files)
+    cols = ceil(num_crops / 2)
+
+    for i in range(1, num_crops):
+        plt.subplot(2, cols, i)
+        im = np.asarray(Image.open(files[i]))
+        plt.imshow(im)
+        plt.title(os.path.basename(files[i]))

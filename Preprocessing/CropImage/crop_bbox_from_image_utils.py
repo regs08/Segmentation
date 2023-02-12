@@ -180,10 +180,24 @@ def plot_crops_from_single_image(filename, save_dir):
         plt.title(os.path.basename(files[i]))
 
 
-def merge_overlapping_bboxes(coco_json):
+def get_bboxes_from_coco_json(coco_json):
+    """
+    wrapper function from getting our bboxes from our json
+    :param coco_json:
+    :return: all_bboxes from the images
+    """
     images, anns = get_image_load_image_and_ann_info_from_coco(coco_json)
     all_bboxes = get_img_id_filename_bbox_from_img_anns_and_anns(images, anns)
+    return all_bboxes
 
 
-    cropped_images_dict = merge_bboxes_from_image_as_dict(all_bboxes)
-    return cropped_images_dict
+def merge_overlapping_bboxes(coco_json):
+    """
+    wrapper function the three functions below returns a dict containing the merged
+    bboxes. filename, and image id of the image
+    :param coco_json:
+    :return:
+    """
+    all_bboxes = get_bboxes_from_coco_json(coco_json)
+    merged_bbboxes = merge_bboxes_from_image_as_dict(all_bboxes)
+    return merged_bbboxes

@@ -178,3 +178,12 @@ def plot_crops_from_single_image(filename, save_dir):
         im = np.asarray(Image.open(files[i]))
         plt.imshow(im)
         plt.title(os.path.basename(files[i]))
+
+
+def merge_overlapping_bboxes(coco_json):
+    images, anns = get_image_load_image_and_ann_info_from_coco(coco_json)
+    all_bboxes = get_img_id_filename_bbox_from_img_anns_and_anns(images, anns)
+
+
+    cropped_images_dict = merge_bboxes_from_image_as_dict(all_bboxes)
+    return cropped_images_dict

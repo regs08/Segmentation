@@ -7,14 +7,12 @@ todo make a class
 from Segmentation.Preprocessing.Generators.patchify_gen import SplitInNumPatchesHieghtWise
 from Segmentation.Preprocessing.ImageToJson.images_to_coco_json import create_coco_anns
 from Segmentation.Preprocessing.CheckImageMasks.CheckImageMaskPairs import check_pairs
-from Segmentation.Preprocessing.CheckImageMasks.CheckNumInstances import check_masks_for_min_masks_and_remove_replace
 from Segmentation.Preprocessing.CropImage.crop_utils import crop_images_from_max_min_bbox_dat
 import os
 from datetime import date
 from Segmentation.Preprocessing.Visualize.view_patches import plot_patches
 from random import sample
 from Segmentation.Preprocessing.Visualize.plot_image_mask_pair import plot_image_mask_pair
-
 """
 Note if we don't have any masks we can create them using the json_to_image.py, the coco json and the image dir
 """

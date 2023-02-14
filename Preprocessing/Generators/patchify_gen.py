@@ -29,8 +29,8 @@ class PatchGen(GenFromFileList):
                  save_dir,
                  save_ext='.png',
                  patch_height=512,
-                 patch_width=512,
-                 step=512,
+                 patch_width=1024,
+                 step=1024,
                  resize=False,
                  resize_height=1024,
                  resize_width=1024,
@@ -130,6 +130,7 @@ class HeightWisePatchifyGen(PatchGen):
         :return:
         """
         img_arr = self.prep_img_mask_arr(self.load_image(image_mask_path))
+
         ####
         #setting our patch height to the height of the image
         ####
@@ -144,7 +145,7 @@ class HeightWisePatchifyGen(PatchGen):
                 single_patch = cv2.cvtColor(single_patch, cv2.COLOR_BGR2RGB)
 
                 if self.resize:
-                    single_patch = cv2.resize(single_patch, (self.resize_height, self.resize_width))
+                    single_patch = cv2.resize(single_patch, (self.resize_height, self.resize_width), interpolation=cv2.INTER_NEAREST)
 
                 patch_save_path = self.get_patch_save_name(image_mask_path, patch_num)
                 assert cv2.imwrite(patch_save_path, single_patch), print(f'Saved failed for {patch_save_path}')
@@ -164,11 +165,11 @@ class HeightWisePatchifyGen(PatchGen):
         """
         w = img_arr.shape[1]
         h = img_arr.shape[0]
-
         new_width = round(w/float(self.patch_width)) * self.patch_width
         dim = (new_width,h)
 
-        return cv2.resize(img_arr, dim)
+        return cv2.resize(img_arr, dim, interpolation=cv2.INTER_NEAREST)
+
 
 
 class SplitInNumPatchesHieghtWise(HeightWisePatchifyGen):

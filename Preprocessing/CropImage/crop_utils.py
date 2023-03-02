@@ -81,11 +81,12 @@ def get_crop_coords(arr, max_x
 
     xmin = arr[:, 0:1].astype(int)
     ymin = arr[:, 1:2].astype(int)
+
     w = arr[:, 2:3].astype(int)
     h = arr[:, 3:4].astype(int)
 
-    xmax = xmin + w
-    ymax = ymin + h
+    xmax = np.max(xmin + w)
+    ymax = np.max(ymin + h)
 
     #setting our dims to the shape expected by mrcnn, 1024
     if xmax < max_x:
@@ -93,7 +94,7 @@ def get_crop_coords(arr, max_x
     if ymax < max_y:
         ymax = max_y
 
-    return [np.min(xmin), np.min(ymin), np.max(xmax), np.max(ymax)]
+    return [np.min(xmin), np.min(ymin), xmax, ymax]
 
 
 def crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_save_dir, all_bboxes, max_x, max_y):

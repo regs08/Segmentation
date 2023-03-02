@@ -91,10 +91,10 @@ def get_crop_coords(arr, max_x
     #setting our dims to the shape expected by mrcnn, 1024
     print(xmax)
     print(type(xmax))
-    if xmax < max_x:
-        xmax = max_x
-    if ymax < max_y:
-        ymax = max_y
+    # if xmax.all() < max_x:
+    #     xmax = max_x
+    # if ymax.all() < max_y:
+    #     ymax = max_y
 
     return [np.min(xmin), np.min(ymin), xmax, ymax]
 

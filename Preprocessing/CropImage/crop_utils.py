@@ -89,13 +89,10 @@ def get_crop_coords(arr, max_x
     ymax = np.max(ymin + h)
 
     #setting our dims to the shape expected by mrcnn, 1024
-    print(xmax)
-    print(type(xmax))
-    # if xmax.all() < max_x:
-    #     xmax = max_x
-    # if ymax.all() < max_y:
-    #     ymax = max_y
-
+    if xmax.astype(int) < max_x:
+        xmax = max_x
+    if ymax.astype(int) < max_y:
+        ymax = max_y
     return [np.min(xmin), np.min(ymin), xmax, ymax]
 
 
@@ -110,7 +107,7 @@ def crop_and_save_image_from_min_max_bbox(bbox_dat, image_dir, save_dir, max_x, 
     img = Image.open(img_path)
     crop_coords = get_crop_coords(bbox_dat['bboxes'],max_x, max_y)
     cropped_img = img.crop(crop_coords)
-    save_filename = f"{bbox_dat['file_name']}_crop"
+    save_filename = f"{os.path.splitext(bbox_dat['file_name'])[0]}_crop.png"
     cropped_img.save(os.path.join(save_dir, save_filename))
 
 

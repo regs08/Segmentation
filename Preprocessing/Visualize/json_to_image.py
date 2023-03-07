@@ -32,7 +32,7 @@ import argparse
 import matplotlib.pyplot as plt
 
 
-def get_images_and_anns(json_file, img_dir, mask_dir):
+def json_to_mask(json_file, img_dir, mask_dir):
     def load_masks_from_ann(ann):
         num_anns = len(ann)
         rand_colors = random.sample(range(15, 255, 5), num_anns)
@@ -100,7 +100,7 @@ def save_processed_dict(dict, save_path):
 
 
 def save_and_process_json(json_file, img_dir, mask_dir, save_path):
-    processed_dict = get_images_and_anns(json_file, img_dir, mask_dir)
+    processed_dict = json_to_mask(json_file, img_dir, mask_dir)
     # save_processed_dict(processed_dict, save_path)
 
 

@@ -15,7 +15,7 @@ simple_aug = iaa.Sequential([
         iaa.GaussianBlur(sigma=(0, 0.5))
     ),
 ], random_order=True) # apply augmenters in random order
-augmentation = iaa.SomeOf((0, 3), [
+augmentation = iaa.SomeOf((0, 2), [
     iaa.Fliplr(0.5),
     iaa.Flipud(0.5),
     iaa.OneOf([iaa.Affine(rotate=90),
@@ -23,6 +23,7 @@ augmentation = iaa.SomeOf((0, 3), [
                iaa.Affine(rotate=270)],
              ),
     iaa.Affine(scale={"x": (0.8, 1.2), "y": (0.8, 1.2)}),
-    iaa.Multiply((0.8, 1.5)),
-    iaa.GaussianBlur(sigma=(0.0, 5.0))
+    iaa.GaussianBlur(sigma=(0.0, 5.0)),
+    iaa.Grayscale(alpha=(0.0, 1.0))
+
 ])

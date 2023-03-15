@@ -23,9 +23,7 @@ def crop_images_from_max_min_bbox_dat(coco_json, image_dir, mask_dir, image_save
     images, anns = get_image_load_image_and_ann_info_from_coco(coco_json)
     bboxes = get_img_id_filename_bbox_from_img_anns_and_anns(images, anns)
 
-    crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_save_dir, bboxes, max_x
-                                   , max_y
-                                   )
+    crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_save_dir, bboxes, max_x, max_y)
 
 
 def get_image_load_image_and_ann_info_from_coco(coco_json):
@@ -88,7 +86,7 @@ def get_crop_coords(arr, max_x
     xmax = np.max(xmin + w)
     ymax = np.max(ymin + h)
 
-    #setting our dims to the shape expected by mrcnn, 1024
+    #setting our dims to the shape expected by our network, default is=1024
     if xmax.astype(int) < max_x:
         xmax = max_x
     if ymax.astype(int) < max_y:
@@ -105,6 +103,7 @@ def crop_and_save_images_and_masks(image_dir, mask_dir, image_save_dir, mask_sav
 def crop_and_save_image_from_min_max_bbox(bbox_dat, image_dir, save_dir, max_x, max_y):
     img_path = os.path.join(image_dir, bbox_dat['file_name'])
     img = Image.open(img_path)
+    assert(img.size[0]> max_x and img.size[1]>max_y, print('Max coords are set to a value higher than the img dims'))
     crop_coords = get_crop_coords(bbox_dat['bboxes'],max_x, max_y)
     cropped_img = img.crop(crop_coords)
     save_filename = f"{os.path.splitext(bbox_dat['file_name'])[0]}_crop.png"
